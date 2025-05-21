@@ -1,0 +1,114 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Roboto, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #F9F6EE;
+  padding: 12px 0px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.nav-left h1 {
+  font-size: 20px;
+  margin-left: 20px;
+  color: #222;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 2;
+}
+
+.nav-center a {
+  text-decoration: none;
+  color: #222;
+  font-size: 16px;
+  margin: 0 20px;
+  padding: 7px;
+}
+
+.nav-center a:hover {
+  background-color: #dcd1d1;
+  padding: 7px;
+  border-radius: 5px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  margin-right: 20px;
+}
+
+.profile-icon, .cart-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 25px;
+}
+
+.profile-btn {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #fff;
+  min-width: 140px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  z-index: 100;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.profile-btn:hover .profile-dropdown,
+.profile-dropdown:hover {
+  display: block;
+}
+
+.profile-dropdown a {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 0;
+  color: #222;
+  text-decoration: none;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.profile-dropdown a:hover {
+  background: #f0f0f0;
+}
+
+.small-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.logout-link {
+  border-top: 1px solid #eee;
+  justify-content: center;
+  text-align: center;
+  padding-top: 14px; 
+  margin-top: 4px;
+}

@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/db_connect.php';
 
-
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
