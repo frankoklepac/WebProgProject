@@ -28,6 +28,8 @@ session_start();
   <?php
   if (isset($_SESSION['username'])) {
       echo "<p>Hello, " . htmlspecialchars($_SESSION['username']) . "!</p>";
+      echo "<p>Your role: " . htmlspecialchars($_SESSION['role']) . "</p>";
+      echo "<p><a href='profile/profile.php'>View Profile</a></p>";
       echo "<p><a href='auth/logout.php'>Logout</a></p>";
   } else {
       echo "<p><a href='auth/login.php'>Login</a> | <a href='auth/register.php'>Register</a></p>";

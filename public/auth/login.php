@@ -55,6 +55,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p><a href="../index.php">Back to Home</a></p>  
         </div>
     </div>
-
 </body>  
 </html>
