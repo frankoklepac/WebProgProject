@@ -18,6 +18,11 @@ session_start();
         <h1>Welcome to SkinBaazar</h1>
       <?php endif; ?>    
     </div>
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <div class="nav-center">
       <a href="index.php">Home</a>
       <a href="currency.php">Game Currency</a>

@@ -112,3 +112,44 @@ body {
   padding-top: 14px; 
   margin-top: 4px;
 }
+
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  margin-left: 20px;
+}
+
+.hamburger span {
+  height: 6px;
+  background: #222;
+  margin: 3px 0;
+  border-radius: 2px;
+  display: block;
+  transition: 0.3s;
+}
+
+@media (max-width: 900px) {
+  .nav-center {
+    display: none;
+    flex-direction: column;
+    background: #fff;
+    position: absolute;
+    top: 60px; 
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .nav-center.active {
+    display: flex;
+  }
+  .hamburger {
+    display: flex;
+  }
+}
+
