@@ -1,0 +1,131 @@
+.currency-content {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  justify-content: flex-start;
+  padding: 32px 0;
+}
+
+.currency-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  padding-top: 120px;
+}
+
+.currency-category {
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+  margin: 0;
+  background: #fff;
+  border: 2px solid white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.currency-category.active {
+  border: 2px solid #10182B; 
+  background-color: #f0f8ff; 
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+  font-weight: bold;
+}
+
+.currency-category:hover {
+  font-weight: bold;
+}
+
+.section-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.section-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.sidebar-text {
+  font-size: 14px;
+  margin-left: 10px;
+  color: #10182B;
+}
+
+.currency-sidebar button {
+  width: 250px;
+  height: 50px;
+  border: 2px solid white;
+  background-color: white;
+}
+
+.currency-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 10px;
+  margin: 0;
+}
+
+.currency-main {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  gap: 16px;
+}
+
+.currency-header, .currency-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.currency-list {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.currency-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  width: 200px;
+  padding: 18px 14px 20px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.currency-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.currency-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.currency-price {
+  font-size: 16px;
+  color: #007bff;
+  margin-bottom: 12px;
+}
+
+.add-to-cart-btn {
+  background: #10182B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 15px;
+  cursor: not-allowed; 
+  opacity: 0.7;
+}

@@ -25,8 +25,8 @@ session_start();
     </div>
     <div class="nav-center">
       <a href="index.php">Home</a>
-      <a href="currency.php">Game Currency</a>
-      <a href="accounts.php">Game Accounts</a>
+      <a href="products/currency.php">Game Currency</a>
+      <a href="products/accounts.php">Game Accounts</a>
       <a href="contact.php">Contact Us</a>
     </div>
     <div class="nav-right">

@@ -11,8 +11,13 @@ body {
   align-items: center;
   background-color: #F9F6EE;
   padding: 12px 0px;
+  position: sticky;
+  top: 0;
 }
 
+.navbar.scrolled {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 .nav-left {
   display: flex;
   align-items: center;
@@ -55,9 +60,9 @@ body {
 }
 
 .profile-icon, .cart-icon {
-  width: 40px;
-  height: 40px;
-  margin: 0 25px;
+  width: 35px;
+  height: 35px;
+  margin: 0 55px 0 0;
 }
 
 .profile-btn {
@@ -68,11 +73,10 @@ body {
 .profile-dropdown {
   display: none;
   position: absolute;
-  right: 0;
+  right: 0; 
   background: #fff;
   min-width: 140px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  z-index: 100;
   border-radius: 6px;
   overflow: hidden;
 }

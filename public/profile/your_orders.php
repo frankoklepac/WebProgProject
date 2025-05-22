@@ -24,7 +24,6 @@ session_start();
   <ul>
     <li>Username: <?php echo htmlspecialchars($_SESSION['username']); ?></li>
     <li>Role: <?php echo htmlspecialchars($_SESSION['role']); ?></li>
-    <!-- Add more user details as needed -->
   </ul>
 </body>
 </html>
