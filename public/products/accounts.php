@@ -115,11 +115,11 @@ if (!isset($_SESSION['user_id'])) {
           <img src="../data/images/marvelrivals_icon.png" class="section-icon" alt="Marvel Rivals Currencies">
           <div class="sidebar-text">Marvel Rivals</div>
         </div>
-      </button>
+      </button> 
     </div>
     <div class="currency-main">
       <div class="currency-header">
-        <h2 id="currency-header-title">Game Currency</h2>
+        <h2 id="currency-header-title">All Game Accounts</h2>
         <div class="sorting">
           <div style="margin: 24px 0;">
             <label for="currency-select"><b>Show prices in:</b></label>
@@ -142,23 +142,41 @@ if (!isset($_SESSION['user_id'])) {
       </div>
       <div class="currency-list">
         <?php
-        $result = $conn->query("SELECT * FROM game_currency ORDER BY created_at DESC");
+        $sql = "
+          SELECT ga.*, gap.photo_path
+          FROM game_accounts ga
+          LEFT JOIN (
+              SELECT account_id, MIN(id) as min_photo_id
+              FROM game_account_photos
+              GROUP BY account_id
+          ) first_photos ON ga.id = first_photos.account_id
+          LEFT JOIN game_account_photos gap ON gap.id = first_photos.min_photo_id
+          ORDER BY ga.created_at DESC
+        ";
+        $result = $conn->query($sql);
         if ($result && $result->num_rows > 0):
-            while ($row = $result->fetch_assoc()):
+          while ($row = $result->fetch_assoc()):
         ?>
-          <div class="currency-card" data-category="<?php echo strtolower(str_replace(' ', '_', $row['game_name'])); ?>"
-              data-created-at="<?php echo htmlspecialchars($row['created_at']); ?>">
-            <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Currency Image" class="currency-img">
+          <div class="currency-card"
+               data-category="<?php echo strtolower(str_replace(' ', '_', $row['game_name'])); ?>"
+               data-created-at="<?php echo htmlspecialchars($row['created_at']); ?>">
+          <img src="<?php echo htmlspecialchars('/WebProgProject/public/' . ($row['photo_path'] ?? 'data/images/default_account.png')); ?>"
+                 alt="Account Image"
+                 class="currency-img"
+                 style="width:100px;height:100px;object-fit:cover;">
             <div class="currency-name">
-              <?php echo htmlspecialchars($row['amount']) . ' ' . htmlspecialchars($row['currency_name']); ?>
+              <?php echo htmlspecialchars($row['game_name']); ?>
             </div>
             <div class="currency-price"
-                data-base-price="<?php echo htmlspecialchars($row['price']); ?>">
+                 data-base-price="<?php echo htmlspecialchars($row['price']); ?>">
               <?php echo number_format($row['price'], 2); ?> €
             </div>
+            <div class="currency-description">
+              <?php echo nl2br(htmlspecialchars($row['description'])); ?>
+            </div>
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-              <form method="post" action="remove_currency.php" onsubmit="return confirm('Are you sure you want to remove this currency?');" style="display:inline;">
-                <input type="hidden" name="currency_id" value="<?php echo $row['id']; ?>">
+              <form method="post" action="remove_account.php" onsubmit="return confirm('Are you sure you want to remove this currency?');" style="display:inline;">
+                <input type="hidden" name="account_id" value="<?php echo $row['id']; ?>">
                 <button type="submit" class="remove-product-btn">Remove Product</button>
               </form>
             <?php else: ?>
@@ -166,16 +184,16 @@ if (!isset($_SESSION['user_id'])) {
             <?php endif; ?>
           </div>
         <?php
-            endwhile;
+          endwhile;
         else:
-            echo "<p>No currency available.</p>";
+          echo "<p>No accounts available.</p>";
         endif;
         ?>
       </div>
     </div>
   </div>
   <script src="../script/script.js"></script>
-  <script src="../script/currency.js"></script>
+  <script src="../script/accounts.js"></script>
   <script src="../script/config.js"></script>
 </body>
 </html>
