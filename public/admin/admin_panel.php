@@ -1,5 +1,7 @@
 <?php
 
+$currency_added = false;
+
 require_once __DIR__ . '/../auth/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
@@ -17,7 +19,9 @@ if (isset($_POST['add_currency'])) {
 
     $stmt = $conn->prepare("INSERT INTO game_currency (game_name, currency_name, amount, price, image_path, added_by) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssidsi", $game, $currency_name, $amount, $price, $image_path, $added_by);
-    $stmt->execute();
+    if ($stmt->execute()) {
+      $currency_added = true; 
+    }
     $stmt->close();
 }
 
@@ -25,20 +29,38 @@ if (isset($_POST['add_account'])) {
     $game = $_POST['account_game'];
     $description = $_POST['account_description'];
     $price = $_POST['account_price'];
-    $seller_id = $_SESSION['user_id']; 
-    
-    if ($game && $description && $price) {
-        $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssdi", $game, $description, $price, $seller_id);
-        if ($stmt->execute()) {
-            echo "<span style='color:green;'>Game account successfully added!</span>";
-        } else {
-            echo "<span style='color:red;'>Database error. Please try again.</span>";
+    $seller_id = $_SESSION['user_id'];
+
+    $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssdi", $game, $description, $price, $seller_id);
+    if ($stmt->execute()) {
+        $account_id = $stmt->insert_id;
+
+        if (!empty($_FILES['account_photos']['name'][0])) {
+            $upload_dir = __DIR__ . '/../uploads/accounts/';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+            $photos = $_FILES['account_photos'];
+            for ($i = 0; $i < min(3, count($photos['name'])); $i++) {
+                if ($photos['error'][$i] === UPLOAD_ERR_OK) {
+                    $filename = uniqid() . '_' . basename($photos['name'][$i]);
+                    $target_file = $upload_dir . $filename;
+                    if (move_uploaded_file($photos['tmp_name'][$i], $target_file)) {
+                        $photo_path = 'uploads/accounts/' . $filename;
+                        $stmt_photo = $conn->prepare("INSERT INTO game_account_photos (account_id, photo_path) VALUES (?, ?)");
+                        $stmt_photo->bind_param("is", $account_id, $photo_path);
+                        $stmt_photo->execute();
+                        $stmt_photo->close();
+                    }
+                }
+            }
         }
-        $stmt->close();
+        echo "<span style='color:green;'>Game account successfully added!</span>";
     } else {
-        echo "<span style='color:red;'>Not all fields were filled.</span>";
+        echo "<span style='color:red;'>Database error. Please try again.</span>";
     }
+    $stmt->close();
 }
 
 $result = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC");
@@ -138,12 +160,11 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
           <div class="sidebar-text">User List</div>
         </div>
       </button>
-    </div>
+    </div> 
     <div class="admin-main">
       <div id="add-currency" class="admin-section active">
         <h2>Add Game Currency</h2>
-        <p>Use this form to add new game currency to the database.</p>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" class="admin-form">
           <label for="game">Game:</label>
           <select id="game" name="game" required>
             <option value="">Select a game</option>
@@ -153,26 +174,28 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
             <option value="World of Tanks">World of Tanks</option>
             <option value="Marvel Rivals">Marvel Rivals</option>
           </select>
-
-          <label for="currency_name">Currency Name:</label>
-          <input type="text" id="currency_name" name="currency_name" required readonly>
+          <input type="hidden" id="image_path" name="image_path">
+  
+          
+          <label for="currency_name">Currency:</label>
+          <div class="currency-info">
+            <img id="currency_image_preview" src="" alt="Currency Image" style="width:45px;height:45px; display:none;">
+            <input type="text" id="currency_name" name="currency_name" required readonly>
+          </div>
 
           <label for="amount">Amount:</label>
           <input type="number" id="amount" name="amount" required min="1">
 
-          <label for="price">Price:</label>
+          <label for="price">Price (€):</label>
           <input type="number" id="price" name="price" required step="0.01" min="0">
 
-          <input type="hidden" id="image_path" name="image_path">
-          <label for="currency_image_preview">Currency Image:</label>
-          <img id="currency_image_preview" src="" alt="Currency Image" style="width:60px;height:60px; display:none;">
 
           <button type="submit" name="add_currency">Add Currency</button>
         </form>
       </div>
       <div id="add-account" class="admin-section">
         <h2>Add Game Account</h2>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data" class="admin-form">
           <label for="account_game">Game:</label>
           <select id="account_game" name="account_game" required>
             <option value="">Select a game</option>
@@ -182,18 +205,21 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
             <option value="World of Tanks">World of Tanks</option>
             <option value="Marvel Rivals">Marvel Rivals</option>
           </select>
-
+          <label for="account_photos">Account Photos (up to 3):</label>
+          <input type="file" id="account_photos" name="account_photos[]" accept="image/*" multiple required>
           <label for="account_description">Description:</label>
           <textarea id="account_description" name="account_description" required></textarea>
 
           <label for="account_price">Price:</label>
           <input type="number" id="account_price" name="account_price" required step="0.01" min="0">
-
+            
           <button type="submit" name="add_account">Add Account</button>
         </form>
       </div>
       <div id="approve-listings" class="admin-section" style="display:none;">
-
+        <h2>Approve Listings</h2>
+        <p>Here you can approve or reject listings.</p>
+        <!-- Add your approve/reject functionality here -->
       </div>
       <div id="user-list" class="admin-section">
         <h2>User List</h2>
@@ -215,10 +241,7 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
             </tr>
           <?php endwhile; ?>
         </table>
-</div>
     </div>
-
-
   </div>
   <script src="../script/admin.js"></script>
   <script src="../script/script.js"></script>
