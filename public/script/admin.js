@@ -52,3 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+document.getElementById('account_photos').addEventListener('change', function(e) {
+  if (this.files.length > 3) {
+    alert('You can upload a maximum of 3 photos.');
+    this.value = '';
+  }
+});

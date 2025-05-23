@@ -12,6 +12,7 @@ body {
   background-color: #F9F6EE;
   padding: 12px 0px;
   position: sticky;
+  z-index: 9999;
   top: 0;
 }
 

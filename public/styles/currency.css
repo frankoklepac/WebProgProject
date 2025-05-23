@@ -82,6 +82,24 @@
   flex-direction: row;
 }
 
+.sorting {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sorting select {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 12px;
+}
+
+.sorting select:hover {
+  border: 1px solid #10182B;
+}
+
 .currency-list {
   flex-wrap: wrap;
   gap: 16px;
@@ -128,4 +146,16 @@
   font-size: 15px;
   cursor: not-allowed; 
   opacity: 0.7;
+}
+
+.remove-product-btn {
+  background: #b22222;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.remove-product-btn:hover {
+  background: #a11a1a;
 }

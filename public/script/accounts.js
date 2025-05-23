@@ -7,12 +7,12 @@ const currencySymbols = {
 };
 
 const categoryTitles = {
-  all: "Game Currency",
-  league_of_legends: "Riot Points",
-  world_of_tanks: "Gold",
-  fortnite: "V-Bucks",
-  pokemon_go: "PokeCoints",
-  marvel_rivals: "Lattice"
+  all: "All Game Accounts",
+  league_of_legends: "League of Legends Accounts",
+  world_of_tanks: "World of Tanks Accounts",
+  fortnite: "Fortnite Accounts",
+  pokemon_go: "Pokemon GO Accounts",
+  marvel_rivals: "Marvel Rivals Accounts"
 };
 
 const USE_EXCHANGE_API = false;
