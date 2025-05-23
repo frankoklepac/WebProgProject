@@ -5,6 +5,7 @@
 
 /public/auth/db_connect.php
 /public/script/config.js
+/public/uploads/*
 # User-specific files
 *.rsuser
 *.suo
