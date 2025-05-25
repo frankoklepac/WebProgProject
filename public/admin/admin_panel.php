@@ -44,7 +44,8 @@ if (isset($_POST['add_account'])) {
             $photos = $_FILES['account_photos'];
             for ($i = 0; $i < min(3, count($photos['name'])); $i++) {
                 if ($photos['error'][$i] === UPLOAD_ERR_OK) {
-                    $filename = uniqid() . '_' . basename($photos['name'][$i]);
+                    $ext = pathinfo($photos['name'][$i], PATHINFO_EXTENSION);
+                    $filename = uniqid('acc_', true) . '.' . $ext;
                     $target_file = $upload_dir . $filename;
                     if (move_uploaded_file($photos['tmp_name'][$i], $target_file)) {
                         $photo_path = 'uploads/accounts/' . $filename;
@@ -128,8 +129,24 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
         </div>
       </div>
       <div class="cart">
-        <a href="../cart.php">
-          <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
+        <?php
+        $cart_count = 0;
+        if (isset($_SESSION['user_id'])) {
+            $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
+            $stmt->bind_param("i", $_SESSION['user_id']);
+            $stmt->execute();
+            $stmt->bind_result($cart_count);
+            $stmt->fetch();
+            $stmt->close();
+        }
+        ?>
+        <a href="../cart/cart.php">
+          <div class="cart-icon-container">
+            <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
+            <?php if ($cart_count > 0): ?>
+              <span class="cart-count"><?php echo $cart_count; ?></span>
+            <?php endif; ?>
+          </div>
         </a>
       </div>
     </div>
@@ -219,7 +236,6 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
       <div id="approve-listings" class="admin-section" style="display:none;">
         <h2>Approve Listings</h2>
         <p>Here you can approve or reject listings.</p>
-        <!-- Add your approve/reject functionality here -->
       </div>
       <div id="user-list" class="admin-section">
         <h2>User List</h2>
