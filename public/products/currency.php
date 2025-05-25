@@ -47,17 +47,17 @@ if (!isset($_SESSION['user_id'])) {
               <div class="icon-wrap">
                 <img src="../data/images/panel_icon.png" class="small-icon" alt="Admin Panel">
               </div>
-              <div>Admin Panel</div>
+              <div>Admin Panel</div>  
             </a>
           <?php endif; ?>
           <?php if (isset($_SESSION['username'])): ?>
-            <a href="../profile/your_orders.php">
+            <a href="../profile/profile.php?section=orders">
               <div class="icon-wrap">
                 <img src="../data/images/order_icon.png" class="small-icon" alt="Orders">
               </div>
               <div>Your Orders</div>
             </a>
-            <a href="../profile/profile.php">
+            <a href="../profile/profile.php?section=profile">
               <div>
                 <img src="../data/images/lock_icon.png" class="small-icon" alt="Profile">
               </div>
@@ -71,8 +71,24 @@ if (!isset($_SESSION['user_id'])) {
         </div>
       </div>
       <div class="cart">
-        <a href="../cart.php">
-          <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
+      <?php
+        $cart_count = 0;
+        if (isset($_SESSION['user_id'])) {
+            $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
+            $stmt->bind_param("i", $_SESSION['user_id']);
+            $stmt->execute();
+            $stmt->bind_result($cart_count);
+            $stmt->fetch();
+            $stmt->close();
+        }
+        ?>
+        <a href="../cart/cart.php">
+          <div class="cart-icon-container">
+            <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
+            <?php if ($cart_count > 0): ?>
+              <span class="cart-count"><?php echo $cart_count; ?></span>
+            <?php endif; ?>
+          </div>
         </a>
       </div>
     </div>
@@ -162,7 +178,7 @@ if (!isset($_SESSION['user_id'])) {
                 <button type="submit" class="remove-product-btn">Remove Product</button>
               </form>
             <?php else: ?>
-             <button class="add-to-cart-btn">Add to Cart</button>
+             <button class="add-to-cart-btn" data-product-id="<?php echo $row['id']; ?>" data-product-type="currency">Add to Cart</button>
             <?php endif; ?>
           </div>
         <?php
