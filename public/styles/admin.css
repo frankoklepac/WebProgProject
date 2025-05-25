@@ -25,7 +25,7 @@
 }
 
 .admin-sidebar button.active {
-  border: 2px solid #10182B; 
+  border: 1px solid #10182B; 
   background-color: #f0f8ff; 
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06); 

@@ -140,12 +140,18 @@
 .add-to-cart-btn {
   background: #10182B;
   color: #fff;
-  border: none;
+  border: 1px solid #fff;
   border-radius: 6px;
   padding: 8px 18px;
   font-size: 15px;
-  cursor: not-allowed; 
   opacity: 0.7;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #fff;
+  color: #10182B;
+  border: 1px solid #10182B;
+  cursor: pointer;
 }
 
 .remove-product-btn {
