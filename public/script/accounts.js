@@ -113,3 +113,4 @@ function sortCurrencyCards(sortType) {
 
   cards.forEach(card => list.appendChild(card));
 }
+
