@@ -1,0 +1,79 @@
+.account-details {
+  max-width: 700px;
+  margin: 40px auto 32px auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 36px 32px 32px 32px;
+  color: #222;
+}
+
+.account-details h2 {
+  font-size: 2em;
+  margin-bottom: 18px;
+  color: #007bff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.account-details p {
+  font-size: 1.08em;
+  margin: 18px 0 0 0;
+  line-height: 1.6;
+}
+
+.account-details b {
+  color: #0056b3;
+}
+
+
+.carousel-container { 
+  position: relative; 
+  width: 300px;
+  height: 300px; 
+  margin: 0 auto 24px auto; 
+}
+
+.carousel-img { 
+  width: 300px; 
+  height: 300px; 
+  object-fit: cover; 
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+.carousel-arrow { 
+  position: absolute; 
+  top: 50%; 
+  transform: translateY(-50%);
+  border: none; 
+  background-color: transparent;
+  cursor: pointer; 
+  border-radius: 50%; 
+  z-index: 2;
+}
+
+.carousel-arrow.left { 
+  left: 0; 
+}
+
+.carousel-arrow.right { 
+  right: 0; 
+}
+
+.account-details a {
+  display: inline-block;
+  margin-top: 28px;
+  color: #007bff;
+  background: #f4f6fa;
+  padding: 10px 22px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
+}
+.account-details a:hover {
+  background: #007bff;
+  color: #fff;
+}

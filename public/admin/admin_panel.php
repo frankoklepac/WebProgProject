@@ -66,6 +66,16 @@ if (isset($_POST['add_account'])) {
 
 $result = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC");
 
+$cart_count = 0;
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $stmt->bind_result($cart_count);
+    $stmt->fetch();
+    $stmt->close();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,13 +119,13 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
             </a>
           <?php endif; ?>
           <?php if (isset($_SESSION['username'])): ?>
-            <a href="profile/your_orders.php">
+            <a href="../profile/profile.php">
               <div class="icon-wrap">
                 <img src="../data/images/order_icon.png" class="small-icon" alt="Orders">
               </div>
               <div>Your Orders</div>
             </a>
-            <a href="../profile/profile.php">
+            <a href="../profile/profile.php?section=profile">
               <div>
                 <img src="../data/images/lock_icon.png" class="small-icon" alt="Profile">
               </div>
@@ -129,17 +139,6 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
         </div>
       </div>
       <div class="cart">
-        <?php
-        $cart_count = 0;
-        if (isset($_SESSION['user_id'])) {
-            $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $stmt->bind_result($cart_count);
-            $stmt->fetch();
-            $stmt->close();
-        }
-        ?>
         <a href="../cart/cart.php">
           <div class="cart-icon-container">
             <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
@@ -239,7 +238,7 @@ $result = $conn->query("SELECT id, username, email, role, created_at FROM users 
       </div>
       <div id="user-list" class="admin-section">
         <h2>User List</h2>
-        <table border="1" cellpadding="8" cellspacing="0">
+        <table class="user-list-table">
           <tr>
             <th>ID</th>
             <th>Username</th>
