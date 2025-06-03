@@ -15,12 +15,10 @@ function showSection(sectionId) {
 }
 
 function showSingleOrder(detailsId) {
-  // Find the order by timestamp
   const timestamp = detailsId.replace('order-details-', '');
   const order = window.orderDetailsData.find(o => o.timestamp == timestamp);
   if (!order) return;
 
-  // Fill in the details section
   document.querySelectorAll('.profile-section').forEach(div => {
     div.classList.remove('active');
     div.style.display = 'none';
@@ -29,12 +27,11 @@ function showSingleOrder(detailsId) {
   detailsSection.style.display = '';
   detailsSection.classList.add('active');
 
-  // Set header
   document.querySelector('.single-order-date').innerHTML = `<b>Order from ${order.dateStr}</b>`;
   document.querySelector('.single-order-id').textContent = `sb-order-${order.orderId}`;
-  // Set images
+  document.querySelector('.single-order-address').innerHTML = 
+      '<b>Shipping Address:</b> ' + (order.address ? order.address : 'N/A');
   document.querySelector('.single-order-images').innerHTML = order.imagesHtml;
-  // Set products table
   let rows = '';
   order.products.forEach(prod => {
     rows += `<tr>

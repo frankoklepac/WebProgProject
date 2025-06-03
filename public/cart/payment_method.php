@@ -1,11 +1,6 @@
 <?php
+
 require_once __DIR__ . '/../auth/db_connect.php';
-
-
-if (!isset($_GET['id'])) {
-    echo "No account specified.";
-    exit;
-}
 
 $cart_count = 0;
 if (isset($_SESSION['user_id'])) {
@@ -18,40 +13,25 @@ if (isset($_SESSION['user_id'])) {
 }
 
 
-$account_id = intval($_GET['id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['go_to_payment'])) {
+    $_SESSION['checkout_address'] = [
+        'street' => $_POST['street'],
+        'house_number' => $_POST['house_number'],
+        'postal_code' => $_POST['postal_code'],
+        'city' => $_POST['city'],
+        'country' => $_POST['country'],
+        'contact' => $_POST['contact']
+    ];
+}
 
-$stmt = $conn->prepare("SELECT ga.*, u.username AS seller_name FROM game_accounts ga LEFT JOIN users u ON ga.seller_id = u.id WHERE ga.id = ?");
-$stmt->bind_param("i", $account_id);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
-    echo "Account not found.";
-    exit;
-}
-$account = $result->fetch_assoc();
-$stmt->close();
-
-$photos = [];
-$photo_stmt = $conn->prepare("SELECT photo_path FROM game_account_photos WHERE account_id = ? ORDER BY id ASC");
-$photo_stmt->bind_param("i", $account_id);
-$photo_stmt->execute();
-$photo_result = $photo_stmt->get_result();
-while ($row = $photo_result->fetch_assoc()) {
-    $photos[] = '../' . $row['photo_path'];
-}
-$photo_stmt->close();
-if (empty($photos)) {
-    $photos[] = '/data/images/default_account.png';
-}
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo htmlspecialchars($account['game_name']); ?> - Account Details</title>
+  <title>Select Payment Method</title>
   <link rel="stylesheet" href="../styles/style.css">
-  <link rel="stylesheet" href="../styles/account_details.css">
+  <link rel="stylesheet" href="../styles/payment_method.css">
 </head>
 <body>
     <div class="navbar">
@@ -69,8 +49,8 @@ if (empty($photos)) {
       </div>
       <div class="nav-center">
         <a href="../index.php">Home</a>
-        <a href="currency.php">Game Currency</a>
-        <a href="accounts.php">Game Accounts</a>
+        <a href="../products/currency.php">Game Currency</a>
+        <a href="../products/accounts.php">Game Accounts</a>
         <a href="../contact.php">Contact Us</a>
       </div>
       <div class="nav-right">
@@ -105,6 +85,7 @@ if (empty($photos)) {
             <?php endif; ?>
           </div>
         </div>
+        <div class="cart">
           <a href="../cart/cart.php">
             <div class="cart-icon-container">
               <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">
@@ -113,32 +94,30 @@ if (empty($photos)) {
               <?php endif; ?>
             </div>
           </a>
+        </div>
       </div>
     </div>
-
-    <div class="account-details">
-      <h2><?php echo htmlspecialchars($account['game_name']); ?> Account</h2>
-      <div class="carousel-container">
-        <button class="carousel-arrow left" onclick="prevImg()">
-            <img src="../data/images/arrow_left.png" alt="Previous" style="width:32px;height:32px;">
-        </button>
-        <img id="carousel-img" src="<?php echo htmlspecialchars($photos[0]); ?>" class="carousel-img" alt="Account Photo">
-        <button class="carousel-arrow right" onclick="nextImg()">
-            <img src="../data/images/arrow_right.png" alt="Next" style="width:32px;height:32px;">
-        </button>
+  <div class="container">
+    <form method="post" action="finalize_order.php" class="payment-method-form" id="paymentForm">
+      <div>
+        <input type="radio" id="cod" name="payment_method" value="cod" checked>
+        <label for="cod"><b>Payment on Delivery</b></label>
       </div>
-      <p><b>Price:</b> <?php echo number_format($account['price'], 2); ?> €</p>
-      <p><b>Description:</b> <?php echo nl2br(htmlspecialchars($account['description'])); ?></p>
-      <?php if (!empty($account['seller_name'])): ?>
-        <p><b>Seller:</b> <?php echo htmlspecialchars($account['seller_name']); ?></p>
-      <?php endif; ?>
-      <a href="accounts.php">Back to Accounts</a>
-      
-    </div>
-    <script>
-      const photos = <?php echo json_encode($photos); ?>;
-
-    </script>
-    <script src="../script/account_details.js"></script>
-  </body>
+      <div>
+        <input type="radio" id="online" name="payment_method" value="online">
+        <label for="online"><b>Online Payment</b></label>
+      </div>
+      <div id="credit-card-fields" style="display:none; margin-top:16px;">
+        <label for="cc_number"><b>Credit Card Number</b></label>
+        <input type="text" id="cc_number" name="cc_number" maxlength="19" required>
+        <label for="cc_expiry"><b>Expiry Date</b></label>
+        <input type="text" id="cc_expiry" name="cc_expiry" placeholder="MM/YY" maxlength="5" required>
+        <label for="cc_cvc"><b>CVC</b></label>
+        <input type="text" id="cc_cvc" name="cc_cvc" maxlength="4" required>
+      </div>
+      <button type="submit" name="order_now">Order Now</button>
+    </form>
+  </div>
+  <script src="../script/payment_method.js"></script>
+</body>
 </html>

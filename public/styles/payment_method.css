@@ -1,0 +1,71 @@
+.payment-method-form {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 28px 24px 28px;
+  max-width: 420px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.payment-method-form label {
+  font-weight: 500;
+  color: #10182B;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.payment-options {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 10px;
+}
+
+.payment-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.credit-card-fields {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.payment-method-form input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #e0e6ed;
+  border-radius: 7px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  background: #f7fafd;
+  transition: border 0.2s;
+}
+.payment-method-form input[type="text"]:focus {
+  border: 1.5px solid #007bff;
+  outline: none;
+  background: #fff;
+}
+
+.payment-method-form button[type="submit"] {
+  background-color: #10182B;
+  color: #F0F0F0;
+  border: 1px solid #10182B;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.payment-method-form button[type="submit"]:hover {
+  background-color: #F0F0F0;
+  color: #10182B;
+  border: 1px solid #10182B;
+}

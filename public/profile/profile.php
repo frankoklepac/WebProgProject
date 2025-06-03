@@ -99,7 +99,8 @@ foreach ($orders_by_time as $timestamp => $orders) {
         'orderId' => $orderId,
         'imagesHtml' => $imagesHtml,
         'products' => $products,
-        'total' => $totalPrice
+        'total' => $totalPrice,
+        'address' => $orders[0]['address']
     ];
 }
 
@@ -236,6 +237,7 @@ if (isset($_SESSION['user_id'])) {
             <span class="single-order-id"></span>
           </div>
         </div>
+        <div class="single-order-address"></div>
         <div class="single-order-images"></div>
         <div class="single-order-products">
           <table>
