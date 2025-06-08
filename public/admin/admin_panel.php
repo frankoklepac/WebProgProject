@@ -5,31 +5,49 @@ $currency_added = false;
 require_once __DIR__ . '/../auth/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../auth/login.php");
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
+    http_response_code(403);
     exit;
 }
 
-if (isset($_POST['add_currency'])) {
-    $game = $_POST['game'];
-    $currency_name = $_POST['currency_name'];
-    $amount = $_POST['amount'];
-    $price = $_POST['price'];
-    $added_by = $_SESSION['user_id'];
-    $image_path = $_POST['image_path'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (isset($input['add_currency'])) {
+        $game = $input['game'] ?? '';
+        $currency_name = $input['currency_name'] ?? '';
+        $amount = $input['amount'] ?? 0;
+        $price = $input['price'] ?? 0.0;
+        $image_path = $input['image_path'] ?? null;
+        $added_by = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("INSERT INTO game_currency (game_name, currency_name, amount, price, image_path, added_by) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssidsi", $game, $currency_name, $amount, $price, $image_path, $added_by);
-    if ($stmt->execute()) {
-      $currency_added = true; 
+        if (empty($game) || empty($currency_name) || $amount <= 0 || $price <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
+            exit;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO game_currency (game_name, currency_name, amount, price, image_path, added_by) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssidsi", $game, $currency_name, $amount, $price, $image_path, $added_by);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Currency added successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error. Please try again.']);
+        }
+        $stmt->close();
+        exit;
     }
-    $stmt->close();
 }
 
-if (isset($_POST['add_account'])) {
-    $game = $_POST['account_game'];
-    $description = $_POST['account_description'];
-    $price = $_POST['account_price'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_account'])) {
+    $game = $_POST['account_game'] ?? '';
+    $description = $_POST['account_description'] ?? '';
+    $price = $_POST['account_price'] ?? 0.0;
     $seller_id = $_SESSION['user_id'];
+
+    if (empty($game) || empty($description) || $price <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
+        exit;
+    }
 
     $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssdi", $game, $description, $price, $seller_id);
@@ -57,11 +75,12 @@ if (isset($_POST['add_account'])) {
                 }
             }
         }
-        echo "<span style='color:green;'>Game account successfully added!</span>";
+        echo json_encode(['success' => true, 'message' => 'Game account successfully added!']);
     } else {
-        echo "<span style='color:red;'>Database error. Please try again.</span>";
+        echo json_encode(['success' => false, 'message' => 'Database error. Please try again.']);
     }
     $stmt->close();
+    exit;
 }
 
 $result = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC");
@@ -151,36 +170,36 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </div>
   <div class="admin-content">
-   <div class="admin-sidebar">
-      <button onclick="showSection('add-currency')">
-        <div class="section-wrap">
-          <img src="../data/images/add_icon.png" alt="" class="section-icon">
-          <div class="sidebar-text">Add Game Currency</div>
-        </div>
-      </button>
-      <button onclick="showSection('add-account')">
-        <div class="section-wrap">
-          <img src="../data/images/add_icon.png" alt="" class="section-icon">
-          <div class="sidebar-text">Add Game Account</div>
-        </div>
-      </button>
-      <button onclick="showSection('approve-listings')">
-        <div class="section-wrap">
-          <img src="../data/images/approve_icon.png" alt="" class="section-icon">
-          <div class="sidebar-text">Approve Listings</div>
-        </div>
-      </button>
-      <button onclick="showSection('user-list')">
-        <div class="section-wrap">
-          <img src="../data/images/user_list_icon.png" alt="" class="section-icon">
-          <div class="sidebar-text">User List</div>
-        </div>
-      </button>
-    </div> 
+    <div class="admin-sidebar">
+        <button onclick="showSection('add-currency')">
+          <div class="section-wrap">
+            <img src="../data/images/add_icon.png" alt="" class="section-icon">
+            <div class="sidebar-text">Add Game Currency</div>
+          </div>
+        </button>
+        <button onclick="showSection('add-account')">
+          <div class="section-wrap">
+            <img src="../data/images/add_icon.png" alt="" class="section-icon">
+            <div class="sidebar-text">Add Game Account</div>
+          </div>
+        </button>
+        <button onclick="showSection('approve-listings')">
+          <div class="section-wrap">
+            <img src="../data/images/approve_icon.png" alt="" class="section-icon">
+            <div class="sidebar-text">Approve Listings</div>
+          </div>
+        </button>
+        <button onclick="showSection('user-list')">
+          <div class="section-wrap">
+            <img src="../data/images/user_list_icon.png" alt="" class="section-icon">
+            <div class="sidebar-text">User List</div>
+          </div>
+        </button>
+      </div> 
     <div class="admin-main">
       <div id="add-currency" class="admin-section active">
         <h2>Add Game Currency</h2>
-        <form method="post" enctype="multipart/form-data" class="admin-form">
+        <form class="admin-form">
           <label for="game">Game:</label>
           <select id="game" name="game" required>
             <option value="">Select a game</option>
@@ -191,8 +210,7 @@ if (isset($_SESSION['user_id'])) {
             <option value="Marvel Rivals">Marvel Rivals</option>
           </select>
           <input type="hidden" id="image_path" name="image_path">
-  
-          
+
           <label for="currency_name">Currency:</label>
           <div class="currency-info">
             <img id="currency_image_preview" src="" alt="Currency Image" style="width:45px;height:45px; display:none;">
@@ -205,13 +223,12 @@ if (isset($_SESSION['user_id'])) {
           <label for="price">Price (€):</label>
           <input type="number" id="price" name="price" required step="0.01" min="0">
 
-
-          <button type="submit" name="add_currency">Add Currency</button>
+          <button type="submit">Add Currency</button>
         </form>
       </div>
       <div id="add-account" class="admin-section">
         <h2>Add Game Account</h2>
-        <form method="post" enctype="multipart/form-data" class="admin-form">
+        <form class="admin-form" enctype="multipart/form-data">
           <label for="account_game">Game:</label>
           <select id="account_game" name="account_game" required>
             <option value="">Select a game</option>
@@ -228,8 +245,8 @@ if (isset($_SESSION['user_id'])) {
 
           <label for="account_price">Price:</label>
           <input type="number" id="account_price" name="account_price" required step="0.01" min="0">
-            
-          <button type="submit" name="add_account">Add Account</button>
+
+          <button type="submit">Add Account</button>
         </form>
       </div>
       <div id="approve-listings" class="admin-section" style="display:none;">

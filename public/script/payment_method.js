@@ -22,12 +22,10 @@ function updateCCFields() {
 codRadio.addEventListener('change', updateCCFields);
 onlineRadio.addEventListener('change', updateCCFields);
 
-// Run on page load
 updateCCFields();
 
 document.getElementById('paymentForm').addEventListener('submit', function(e) {
   if (onlineRadio.checked) {
-    // Card number: 16 digits, can have spaces
     const ccNumber = document.getElementById('cc_number').value.replace(/\s+/g, '');
     if (!/^\d{16}$/.test(ccNumber)) {
       alert('Please enter a valid 16-digit credit card number.');
@@ -35,7 +33,6 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
       e.preventDefault();
       return false;
     }
-    // Expiry: MM/YY, month 01-12, year 00-99
     const ccExpiry = document.getElementById('cc_expiry').value;
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(ccExpiry)) {
       alert('Please enter a valid expiry date in MM/YY format.');
@@ -43,7 +40,6 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
       e.preventDefault();
       return false;
     }
-    // CVC: 3 or 4 digits
     const ccCvc = document.getElementById('cc_cvc').value;
     if (!/^\d{3,4}$/.test(ccCvc)) {
       alert('Please enter a valid 3 or 4 digit CVC.');

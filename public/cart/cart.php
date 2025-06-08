@@ -204,6 +204,6 @@ $grand_total = 0;
       <?php endif; ?>
     </div>
   </div>
-
+  <script src="../script/script.js"></script>
 </body>
 </html>

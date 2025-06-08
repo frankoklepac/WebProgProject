@@ -3,10 +3,19 @@
 require_once __DIR__ . '/../auth/db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
-    exit;
+  header("Location: ../auth/login.php");
+  exit;
 }
 
+$cart_count = 0;
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $stmt->bind_result($cart_count);
+    $stmt->fetch();
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -71,17 +80,6 @@ if (!isset($_SESSION['user_id'])) {
         </div>
       </div>
       <div class="cart">
-      <?php
-        $cart_count = 0;
-        if (isset($_SESSION['user_id'])) {
-            $stmt = $conn->prepare("SELECT SUM(quantity) FROM cart WHERE user_id = ?");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $stmt->bind_result($cart_count);
-            $stmt->fetch();
-            $stmt->close();
-        }
-        ?>
         <a href="../cart/cart.php">
           <div class="cart-icon-container">
             <img src="../data/images/cart_icon.png" alt="Cart" class="cart-icon">

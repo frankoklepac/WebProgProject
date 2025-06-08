@@ -41,7 +41,6 @@ function showSingleOrder(detailsId) {
     </tr>`;
   });
   document.querySelector('.single-order-products tbody').innerHTML = rows;
-  // Set total
   document.querySelector('.single-order-total b').textContent = `Total: ${Number(order.total).toFixed(2)} €`;
 }
 
@@ -50,3 +49,4 @@ document.addEventListener('DOMContentLoaded', function() {
   const section = params.get('section') || 'orders';
   showSection(section);
 });
+

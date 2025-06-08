@@ -23,7 +23,6 @@ if ($action === 'increase' && $product_type === 'currency') {
     $stmt->execute();
     $stmt->close();
 } elseif ($action === 'decrease' && $product_type === 'currency') {
-    // Only decrease if quantity > 1
     $stmt = $conn->prepare("SELECT quantity FROM cart WHERE user_id=? AND product_type=? AND product_id=?");
     $stmt->bind_param("isi", $user_id, $product_type, $product_id);
     $stmt->execute();
