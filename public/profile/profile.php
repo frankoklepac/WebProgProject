@@ -55,7 +55,7 @@ foreach ($orders_by_time as $timestamp => $orders) {
 
     foreach ($orders as $order) {
         if ($order['account_id']) {
-              $acc_stmt = $conn->prepare("SELECT game_name FROM game_accounts WHERE id = ?");
+            $acc_stmt = $conn->prepare("SELECT game_name FROM game_accounts WHERE id = ?");
             $acc_stmt->bind_param("i", $order['account_id']);
             $acc_stmt->execute();
             $acc_stmt->bind_result($game_name);
@@ -115,6 +115,12 @@ if (isset($_SESSION['user_id'])) {
     $stmt->close();
 }
 
+$user_stmt = $conn->prepare("SELECT username, email, date_of_birth, phone_number, created_at FROM users WHERE id = ?");
+$user_stmt->bind_param("i", $user_id);
+$user_stmt->execute();
+$user_stmt->bind_result($username, $email, $dob, $phone, $created_at);
+$user_stmt->fetch();
+$user_stmt->close();
 
 ?>
 <!DOCTYPE html>
@@ -257,12 +263,40 @@ if (isset($_SESSION['user_id'])) {
         </div>
       </div>
       <div id="profile" class="profile-section">
-        <h2>Your Profile and Security</h2>
-        <!-- Profile details go here -->
+        <div class="profile-info-container">
+          <div class="profile-info">
+            <h2>Your Profile Information</h2>
+            <form id="profile-form" method="post" action="save_profile.php" autocomplete="off">
+              <label for="username">Username:</label><br>
+              <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required><br>
+              <label for="email">Email:</label><br>
+              <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" readonly><br>
+              <label for="dob">Date of Birth:</label><br>
+              <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($dob); ?>"><br>
+              <label for="phone">Phone Number:</label><br>
+              <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($phone); ?>"><br>
+              <label for="created_at">Member Since:</label><br>
+              <input type="text" id="created_at" name="created_at" value="<?php echo htmlspecialchars((new DateTime($created_at))->format('d.m.Y')); ?>" readonly><br>
+              <button type="submit">Save Changes</button>
+            </form>
+          </div>
+          <div class="password-change">
+            <h2>Change Password</h2>
+            <form id="password-form" method="post" action="change_password.php" autocomplete="off">
+              <label for="current_password">Current Password:</label><br>
+              <input type="password" id="current_password" name="current_password" required><br>
+              <label for="new_password">New Password:</label><br>
+              <input type="password" id="new_password" name="new_password" required><br>
+              <label for="confirm_password">Confirm New Password:</label><br>
+              <input type="password" id="confirm_password" name="confirm_password" required><br>
+              <button type="submit">Change Password</button>
+            </form>
+          </div>
+        </div>
       </div>
       <div id="listings" class="profile-section">
         <h2>Your Listings</h2>
-        <!-- Listings details go here -->
+        <!-- TODO : Implement user listings -->
       </div>
     </div>
   </div>

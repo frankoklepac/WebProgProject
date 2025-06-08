@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../auth/db_connect.php';
 
 $cart_count = 0;
@@ -12,6 +11,30 @@ if (isset($_SESSION['user_id'])) {
     $stmt->close();
 }
 
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['go_to_payment'])) {
+    $street = trim($_POST['street']);
+    $house_number = trim($_POST['house_number']);
+    $postal_code = trim($_POST['postal_code']);
+    $city = trim($_POST['city']);
+    $country = trim($_POST['country']);
+    $contact = trim($_POST['contact']);
+
+    if (empty($street) || empty($house_number) || empty($postal_code) || empty($city) || empty($country) || empty($contact)) {
+        $error = "All fields are required.";
+    } else {
+        $_SESSION['checkout_address'] = [
+            'street' => $street,
+            'house_number' => $house_number,
+            'postal_code' => $postal_code,
+            'city' => $city,
+            'country' => $country,
+            'contact' => $contact
+        ];
+        header("Location: payment_method.php?status=address_saved");
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,40 +114,41 @@ if (isset($_SESSION['user_id'])) {
     <h2>Checkout</h2>
     <div>
       <div class="checkout-form">
-        <form method="post" action="payment_method.php" class="styled-checkout-form">
+        <form method="post" action="checkout.php" class="styled-checkout-form">
           <div class="row-fields">
             <div style="flex:2;">
               <label for="street"><b>Street Name</b></label>
-              <input type="text" id="street" name="street" required>
+              <input type="text" id="street" name="street" value="<?php echo isset($_SESSION['checkout_address']['street']) ? htmlspecialchars($_SESSION['checkout_address']['street']) : ''; ?>" required>
             </div>
             <div style="flex:1; min-width:90px;">
               <label for="house_number"><b>House Number</b></label>
-              <input type="text" id="house_number" name="house_number" required>
+              <input type="text" id="house_number" name="house_number" value="<?php echo isset($_SESSION['checkout_address']['house_number']) ? htmlspecialchars($_SESSION['checkout_address']['house_number']) : ''; ?>" required>
             </div>
           </div>
 
           <div class="row-fields">
             <div style="flex:1; min-width:90px;">
               <label for="postal_code"><b>Postal Code</b></label>
-              <input type="text" id="postal_code" name="postal_code" required>
+              <input type="text" id="postal_code" name="postal_code" value="<?php echo isset($_SESSION['checkout_address']['postal_code']) ? htmlspecialchars($_SESSION['checkout_address']['postal_code']) : ''; ?>" required>
             </div>
             <div style="flex:2;">
               <label for="city"><b>City</b></label>
-              <input type="text" id="city" name="city" required>
+              <input type="text" id="city" name="city" value="<?php echo isset($_SESSION['checkout_address']['city']) ? htmlspecialchars($_SESSION['checkout_address']['city']) : ''; ?>" required>
             </div>
           </div>
 
           <label for="country"><b>Country</b></label>
-          <input type="text" id="country" name="country" required>
+          <input type="text" id="country" name="country" value="<?php echo isset($_SESSION['checkout_address']['country']) ? htmlspecialchars($_SESSION['checkout_address']['country']) : ''; ?>" required>
 
           <label for="contact"><b>Contact Number</b></label>
-          <input type="text" id="contact" name="contact" required>
+          <input type="text" id="contact" name="contact" value="<?php echo isset($_SESSION['checkout_address']['contact']) ? htmlspecialchars($_SESSION['checkout_address']['contact']) : ''; ?>" required>
 
           <button type="submit" name="go_to_payment">Go to payment</button>
         </form>
       </div>
     </div>
   </div>
-
+  <script src="../script/script.js"></script>
+  <!--<script src="../script/checkout.js"></script>-->
 </body>
 </html>
