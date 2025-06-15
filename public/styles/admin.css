@@ -78,7 +78,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 250px;
+  width: 300px;
   margin: 0 auto;
   background: #fff;
   padding: 32px 24px;
@@ -114,19 +114,21 @@
 }
 
 .admin-form button[type="submit"] {
-  background: #10182B;
-  color: #fff;
-  border: none;
+  background-color: #10182B;
+  color: #F0F0F0;
+  border: 1px solid #10182B;
   border-radius: 6px;
   padding: 10px 0;
   font-size: 16px;
   cursor: pointer;
   margin-top: 12px;
-  transition: background 0.2s;
+  transition: background 0.4s, color 0.4s;
 }
 
 .admin-form button[type="submit"]:hover {
-  background: #223366;
+    background-color: #F0F0F0;
+    color: #10182B;
+    border: 1px solid #10182B;
 }
 
 .admin-form img {
@@ -185,4 +187,10 @@
 
 .user-list-table tr:last-child td {
   border-bottom: none;
+}
+
+#account_description {
+  resize: vertical;
+  min-height: 100px; 
+  max-height: 300px; 
 }

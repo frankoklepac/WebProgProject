@@ -154,6 +154,23 @@
   border: 1px solid #10182B;
 }
 
+.view-details-btn {
+  background-color: #10182B;
+  color: #F0F0F0;
+  border: 1px solid #10182B;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.view-details-btn:hover {
+  background-color: #F0F0F0;
+  color: #10182B;
+  border: 1px solid #10182B;
+}
+
 .remove-product-btn {
   background: #b22222;
   color: #fff;

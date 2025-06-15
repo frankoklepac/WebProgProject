@@ -11,7 +11,7 @@
 .account-details h2 {
   font-size: 2em;
   margin-bottom: 18px;
-  color: #007bff;
+  color: #10182B;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -23,7 +23,7 @@
 }
 
 .account-details b {
-  color: #0056b3;
+  color: #10182B;
 }
 
 
@@ -62,18 +62,34 @@
   right: 0; 
 }
 
-.account-details a {
+.account-details a, .add-to-cart-btn {
   display: inline-block;
   margin-top: 28px;
-  color: #007bff;
-  background: #f4f6fa;
+  background-color: #10182B;
+  color: #F0F0F0;
+  border: 1px solid #10182B;
   padding: 10px 22px;
   border-radius: 6px;
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.18s, color 0.18s;
+  font-size: 16px;
+  line-height: 1.5; 
+  font-family: inherit; 
+  text-align: center; 
+  box-sizing: border-box; 
+  appearance: none; 
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+  transition: background 0.4s, color 0.4s;
 }
-.account-details a:hover {
-  background: #007bff;
-  color: #fff;
+
+.account-details a:hover, .add-to-cart-btn:hover {
+  background-color: #F0F0F0;
+  color: #10182B;
+  border: 1px solid #10182B;
+}
+
+.account-actions {
+  display: flex;
+  justify-content: space-between;
 }
