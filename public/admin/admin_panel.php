@@ -43,14 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_account'])) {
     $description = $_POST['account_description'] ?? '';
     $price = $_POST['account_price'] ?? 0.0;
     $seller_id = $_SESSION['user_id'];
+    $status = ($_SESSION['role'] === 'admin') ? 'approved' : 'pending'; 
+
 
     if (empty($game) || empty($description) || $price <= 0) {
         echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
         exit;
     }
 
-    $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssdi", $game, $description, $price, $seller_id);
+    $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id, status) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssdiss", $game, $description, $price, $seller_id, $status);
     if ($stmt->execute()) {
         $account_id = $stmt->insert_id;
 
@@ -82,6 +84,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_account'])) {
     $stmt->close();
     exit;
 }
+
+$pending_stmt = $conn->prepare("SELECT ga.id, ga.game_name, ga.description, ga.price, ga.status, u.username AS seller_name FROM game_accounts ga LEFT JOIN users u ON ga.seller_id = u.id WHERE ga.status = 'pending' ORDER BY ga.created_at DESC");
+$pending_stmt->execute();
+$pending_result = $pending_stmt->get_result();
+$pending_accounts = [];
+while ($row = $pending_result->fetch_assoc()) {
+    $photos = [];
+    $photo_stmt = $conn->prepare("SELECT photo_path FROM game_account_photos WHERE account_id = ? ORDER BY id ASC");
+    $photo_stmt->bind_param("i", $row['id']);
+    $photo_stmt->execute();
+    $photo_result = $photo_stmt->get_result();
+    while ($photo_row = $photo_result->fetch_assoc()) {
+        $photos[] = '../' . $photo_row['photo_path'];
+    }
+    $photo_stmt->close();
+    if (empty($photos)) {
+        $photos[] = '../data/images/default_account.png';
+    }
+    $row['photos'] = $photos;
+    $pending_accounts[] = $row;
+}
+$pending_stmt->close();
+
 
 $result = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC");
 
@@ -240,18 +265,53 @@ if (isset($_SESSION['user_id'])) {
           </select>
           <label for="account_photos">Account Photos (up to 3):</label>
           <input type="file" id="account_photos" name="account_photos[]" accept="image/*" multiple required>
+
           <label for="account_description">Description:</label>
           <textarea id="account_description" name="account_description" required></textarea>
 
-          <label for="account_price">Price:</label>
+          <label for="account_price">Price (€):</label>
           <input type="number" id="account_price" name="account_price" required step="0.01" min="0">
 
           <button type="submit">Add Account</button>
         </form>
       </div>
-      <div id="approve-listings" class="admin-section" style="display:none;">
+      <div id="approve-listings" class="admin-section">
         <h2>Approve Listings</h2>
-        <p>Here you can approve or reject listings.</p>
+        <?php if (empty($pending_accounts)): ?>
+          <p>No pending accounts to approve.</p>
+        <?php else: ?>
+          <table class="pending-accounts-table">
+            <thead>
+              <tr>
+                <th>Game</th>
+                <th>Description</th>
+                <th>Price (€)</th>
+                <th>Seller</th>
+                <th>Photos</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($pending_accounts as $account): ?>
+                <tr data-account-id="<?php echo $account['id']; ?>">
+                  <td><?php echo htmlspecialchars($account['game_name']); ?></td>
+                  <td><?php echo htmlspecialchars($account['description']); ?></td>
+                  <td><?php echo number_format($account['price'], 2); ?></td>
+                  <td><?php echo htmlspecialchars($account['seller_name']); ?></td>
+                  <td>
+                    <?php foreach ($account['photos'] as $photo): ?>
+                      <img src="<?php echo htmlspecialchars($photo); ?>" alt="Account Photo" style="width:50px; height:50px; margin-right:5px;">
+                    <?php endforeach; ?>
+                  </td>
+                  <td>
+                    <button class="approve-btn" data-account-id="<?php echo $account['id']; ?>">Approve</button>
+                    <button class="reject-btn" data-account-id="<?php echo $account['id']; ?>">Reject</button>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        <?php endif; ?>
       </div>
       <div id="user-list" class="admin-section">
         <h2>User List</h2>
