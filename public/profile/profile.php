@@ -7,12 +7,17 @@ if (!$user_id) {
     exit;
 }
 
+if ($_SESSION['role'] !== 'user') {
+    header('Location: ../index.php');
+    exit;
+}
+
 $gameIconMap = [
     'League of Legends' => 'lol_icon.png',
     'Fortnite' => 'fortnite_icon.png',
     'World of Tanks' => 'wot_icon.png',
     'Pokemon GO' => 'pokemongo_icon.png',
-    'Marvel Rival' => 'marvelrivals_icon.png',
+    'Marvel Rivals' => 'marvelrivals_icon.png',
 ];
 
 $stmt = $conn->prepare("SELECT * FROM orders WHERE buyer_id = ? ORDER BY purchased_at DESC");
@@ -122,6 +127,37 @@ $user_stmt->bind_result($username, $email, $dob, $phone, $created_at);
 $user_stmt->fetch();
 $user_stmt->close();
 
+$listings_stmt = $conn->prepare("
+    SELECT ga.*, gap.photo_path
+    FROM game_accounts ga
+    LEFT JOIN (
+        SELECT account_id, MIN(id) as min_photo_id
+        FROM game_account_photos
+        GROUP BY account_id
+    ) first_photos ON ga.id = first_photos.account_id
+    LEFT JOIN game_account_photos gap ON gap.id = first_photos.min_photo_id
+    WHERE ga.seller_id = ?
+    ORDER BY ga.created_at DESC
+");
+$listings_stmt->bind_param("i", $user_id);
+$listings_stmt->execute();
+$listings_result = $listings_stmt->get_result();
+$listings = [];
+while ($row = $listings_result->fetch_assoc()) {
+    $listings[] = $row;
+}
+$listings_stmt->close();
+
+
+$pwmsg = $_GET['pwmsg'] ?? '';
+$pwmsg_text = '';
+if ($pwmsg === 'empty') $pwmsg_text = '<div class="error">Please fill in all fields.</div>';
+elseif ($pwmsg === 'same') $pwmsg_text = '<div class="error">New password cannot be the same as the current password.</div>';
+elseif ($pwmsg === 'nomatch') $pwmsg_text = '<div class="error">New passwords do not match.</div>';
+elseif ($pwmsg === 'wrongcurrent') $pwmsg_text = '<div class="error">Current password is incorrect.</div>';
+elseif ($pwmsg === 'success') $pwmsg_text = '<div class="success">Password changed successfully!</div>';
+elseif ($pwmsg === 'error') $pwmsg_text = '<div class="error">An error occurred. Please try again.</div>';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,6 +167,7 @@ $user_stmt->close();
   <title><?php echo htmlspecialchars($_SESSION['username']); ?>'s Profile</title>
   <link rel="stylesheet" href="../styles/style.css">
   <link rel="stylesheet" href="../styles/profile.css">
+  <link rel="stylesheet" href="../styles/admin.css">
 </head>
 <body>
   <div class="navbar">
@@ -215,6 +252,12 @@ $user_stmt->close();
           <div class="sidebar-text">Your Listings</div>
         </div>
       </button>
+      <button onclick="showSection('sell-account')">
+        <div class="section-wrap">
+          <img src="../data/images/sell_icon.png" alt="Sell Account" class="section-icon">
+          <div class="sidebar-text">Sell an Account</div>
+        </div>
+      </button>
     </div>
     <div class="profile-main">
       <div id="orders" class="profile-section active">
@@ -282,6 +325,7 @@ $user_stmt->close();
           </div>
           <div class="password-change">
             <h2>Change Password</h2>
+            <?php echo $pwmsg_text; ?>
             <form id="password-form" method="post" action="change_password.php" autocomplete="off">
               <label for="current_password">Current Password:</label><br>
               <input type="password" id="current_password" name="current_password" required><br>
@@ -295,13 +339,79 @@ $user_stmt->close();
         </div>
       </div>
       <div id="listings" class="profile-section">
-        <h2>Your Listings</h2>
-        <!-- TODO : Implement user listings -->
+          <div class="listings-section">
+              <?php if (empty($listings)): ?>
+                  <p>You have no listings yet.</p>
+              <?php else: ?>
+                  <?php foreach ($listings as $listing): ?>
+                      <div class="listing-card">
+                          <img src="<?php echo htmlspecialchars('/WebProgProject/public/' . ($listing['photo_path'] ?? 'data/images/default_account.png')); ?>"
+                              alt="Account Image"
+                              class="currency-img"
+                              style="width:100px;height:100px;object-fit:cover;">
+                          <div class="listing-title"><?php echo htmlspecialchars($listing['game_name']); ?></div>
+                          <div class="listing-price">€<?php echo number_format($listing['price'], 2); ?></div>
+                          <div class="listing-status">
+                              <?php
+                              if ($listing['is_sold']) {
+                                  echo 'Sold';
+                              } elseif ($listing['status'] === 'approved') {
+                                  echo 'Approved';
+                              } elseif ($listing['status'] === 'pending') {
+                                  echo 'Pending Approval';
+                              } elseif ($listing['status'] === 'rejected') {
+                                  echo 'Rejected';
+                              } else {
+                                  echo 'Unknown';
+                              }
+                              ?>
+                          </div>
+                          <div class="listing-actions">
+                              <a href="../products/account_details.php?id=<?php echo $listing['id']; ?>">View</a>
+                          </div>
+                      </div>
+                  <?php endforeach; ?>
+              <?php endif; ?>
+          </div>
+      </div>
+      <div id="sell-account" class="profile-section">
+        <form class="profile-form" enctype="multipart/form-data">
+          <h2>Sell an Account</h2>
+          <label for="account_game">Game:</label>
+          <select id="account_game" name="account_game" required>
+            <option value="">Select a game</option>
+            <option value="League of Legends">League of Legends</option>
+            <option value="Pokemon GO">Pokemon GO</option>
+            <option value="Fortnite">Fortnite</option>
+            <option value="World of Tanks">World of Tanks</option>
+            <option value="Marvel Rivals">Marvel Rivals</option>
+          </select>
+          <label for="account_photos">Account Photos (up to 3):</label>
+          <input type="file" id="account_photos" name="account_photos[]" accept="image/*" multiple required>
+          
+          <label for="account_description">Description:</label>
+          <textarea id="account_description" name="account_description" required></textarea>
+          
+          <label for="account_price">Price (€):</label>
+          <input type="number" id="account_price" name="account_price" required step="0.01" min="0">
+          
+          <button type="submit">Submit Account for Review</button>
+        </form>
       </div>
     </div>
   </div>
   <script>
     window.orderDetailsData = <?php echo json_encode($order_tiles); ?>;
+    if (window.location.search.includes('pwmsg=')) {
+      const url = new URL(window.location);
+      url.searchParams.delete('pwmsg');
+      window.history.replaceState({}, '', url);
+
+      setTimeout(function() {
+        var msg = document.querySelector('.error, .success');
+        if (msg) msg.style.display = 'none';
+      }, 2000);
+    }
   </script>
   <script src="../script/script.js"></script>
   <script src="../script/profile.js"></script>
