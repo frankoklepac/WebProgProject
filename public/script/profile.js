@@ -44,9 +44,61 @@ function showSingleOrder(detailsId) {
   document.querySelector('.single-order-total b').textContent = `Total: ${Number(order.total).toFixed(2)} €`;
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
   const params = new URLSearchParams(window.location.search);
   const section = params.get('section') || 'orders';
   showSection(section);
-});
 
+  const accountForm = document.querySelector('#sell-account form');
+  if (accountForm) {
+    accountForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('account_game', document.getElementById('account_game').value);
+      formData.append('account_description', document.getElementById('account_description').value);
+      formData.append('account_price', parseFloat(document.getElementById('account_price').value));
+      formData.append('add_account', true);
+
+      const accountPhotos = document.getElementById('account_photos').files;
+      for (let i = 0; i < Math.min(3, accountPhotos.length); i++) {
+        formData.append('account_photos[]', accountPhotos[i]);
+      }
+
+      fetch('add_account.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.color = data.success ? 'green' : 'red';
+        messageDiv.textContent = data.message;
+        accountForm.prepend(messageDiv);
+        setTimeout(() => messageDiv.remove(), 3000);
+        if (data.success) {
+          accountForm.reset();
+          // Optionally refresh listings or redirect
+          window.location.href = 'profile.php?section=listings';
+        }
+      })
+      .catch(error => {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'Error communicating with server.';
+        accountForm.prepend(messageDiv);
+        setTimeout(() => messageDiv.remove(), 3000);
+      });
+    });
+  }
+
+  const accountPhotosInput = document.getElementById('account_photos');
+  if (accountPhotosInput) {
+    accountPhotosInput.addEventListener('change', function(e) {
+      if (this.files.length > 3) {
+        alert('You can upload a maximum of 3 photos.');
+        this.value = '';
+      }
+    });
+  }
+});
