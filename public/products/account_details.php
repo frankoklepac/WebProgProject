@@ -117,7 +117,11 @@ if (empty($photos)) {
     </div>
 
     <div class="account-details">
-      <h2><?php echo htmlspecialchars($account['game_name']); ?> Account</h2>
+      <?php if ($account['is_sold']): ?>
+        <h2><?php echo htmlspecialchars($account['game_name']); ?> Accoun - Out of Stock</h2>
+      <?php else: ?>
+        <h2><?php echo htmlspecialchars($account['game_name']); ?> Account</h2>
+      <?php endif; ?>
       <div class="carousel-container">
         <button class="carousel-arrow left" onclick="prevImg()">
             <img src="../data/images/arrow_left.png" alt="Previous" style="width:32px;height:32px;">
@@ -128,17 +132,28 @@ if (empty($photos)) {
         </button>
       </div>
       <p><b>Price:</b> <?php echo number_format($account['price'], 2); ?> €</p>
-      <p><b>Description:</b> <?php echo nl2br(htmlspecialchars($account['description'])); ?></p>
+      <p><b>Description:</b> <br> <?php echo nl2br(htmlspecialchars($account['description'])); ?></p>
       <?php if (!empty($account['seller_name'])): ?>
         <p><b>Seller:</b> <?php echo htmlspecialchars($account['seller_name']); ?></p>
       <?php endif; ?>
-      <a href="accounts.php">Back to Accounts</a>
-      
+      <?php if (!$account['is_sold']): ?>
+        <div class="account-actions">
+          <a href="accounts.php">Back to Accounts</a>
+          <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] != $account['seller_id']): ?>
+            <button class="add-to-cart-btn" data-product-id="<?php echo $account['id']; ?>" data-product-type="account">Add to Cart</button>
+          <?php else: ?>
+            <button class="add-to-cart-btn disabled" disabled>You are selling this account</button>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     </div>
     <script>
       const photos = <?php echo json_encode($photos); ?>;
 
     </script>
-    <script src="../script/account_details.js"></script>
+
+  <script src="../script/script.js"></script>
+  <script src="../script/accounts.js"></script>
+  <script src="../script/account_details.js"></script>
   </body>
 </html>
