@@ -1,6 +1,5 @@
 <?php
 
-session_start();
 require_once __DIR__ . '/../auth/db_connect.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {

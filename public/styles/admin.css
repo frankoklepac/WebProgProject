@@ -194,3 +194,59 @@
   min-height: 100px; 
   max-height: 300px; 
 }
+
+.listings-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.listing-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(16,24,43,0.2);
+  width: 300px;
+  padding: 22px 18px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+
+
+.listing-card:hover {
+  box-shadow: 0 4px 16px rgba(16,24,43,0.4);
+}
+
+.approve-btn, .reject-btn {
+  top: 10px;
+  color: #eaf3ff;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.approve-btn {
+  right: 10px;
+  background-color: #28a745;
+  border: 1px solid #28a745;
+}
+
+.reject-btn {
+  right: 100px;
+  background-color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.approve-btn:hover {
+  background-color: #eaf3ff;
+  color: #28a745;
+}
+
+.reject-btn:hover {
+  background-color: #eaf3ff;
+  color: #dc3545;
+}

@@ -94,7 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const accountForm = document.querySelector('#add-account form');
   if (accountForm) {
+    console.log('Account form found');
     accountForm.addEventListener('submit', function(e) {
+      console.log('Account form submitted');
       e.preventDefault();
       const formData = new FormData();
       formData.append('account_game', document.getElementById('account_game').value);
@@ -102,11 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
       formData.append('account_price', parseFloat(document.getElementById('account_price').value));
       formData.append('add_account', true);
 
+      console.log('Account data prepared:', {
+        game: document.getElementById('account_game').value,
+        description: document.getElementById('account_description').value,
+        price: parseFloat(document.getElementById('account_price').value)
+      });
+
+
       const accountPhotos = document.getElementById('account_photos').files;
       for (let i = 0; i < Math.min(3, accountPhotos.length); i++) {
         formData.append('account_photos[]', accountPhotos[i]);
       }
 
+      console.log('Account photos added:', accountPhotos.length);
+      
       fetch('../admin/admin_panel.php', {
         method: 'POST',
         body: formData
@@ -158,10 +169,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.querySelector('#approve-listings').prepend(messageDiv);
         setTimeout(() => messageDiv.remove(), 3000);
-        if (data.success) {
-          const row = this.closest('tr');
-          if (row) row.remove();
-        }
+      if (data.success) {
+        const card = this.closest('.listing-card');
+        if (card) card.remove();
+      }
       })
       .catch(error => {
         const messageDiv = document.createElement('div');
@@ -175,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.querySelectorAll('.reject-btn').forEach(button => {
     button.addEventListener('click', function() {
-      const row = this.closest('tr');
+      const card = this.closest('.listing-card');
       const accountId = this.getAttribute('data-account-id');
       fetch('approve_account.php', {
         method: 'POST',
@@ -190,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#approve-listings').prepend(messageDiv);
         setTimeout(() => messageDiv.remove(), 3000);
         if (data.success) {
-          row.remove();
+            if (card) card.remove();
         }
       })
       .catch(error => {

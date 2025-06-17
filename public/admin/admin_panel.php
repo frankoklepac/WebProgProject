@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_account'])) {
     }
 
     $stmt = $conn->prepare("INSERT INTO game_accounts (game_name, description, price, seller_id, status) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssdiss", $game, $description, $price, $seller_id, $status);
+    $stmt->bind_param("ssdis", $game, $description, $price, $seller_id, $status);
     if ($stmt->execute()) {
         $account_id = $stmt->insert_id;
 
@@ -278,39 +278,27 @@ if (isset($_SESSION['user_id'])) {
       <div id="approve-listings" class="admin-section">
         <h2>Approve Listings</h2>
         <?php if (empty($pending_accounts)): ?>
-          <p>No pending accounts to approve.</p>
+          <p>No pending listings to approve.</p>
         <?php else: ?>
-          <table class="pending-accounts-table">
-            <thead>
-              <tr>
-                <th>Game</th>
-                <th>Description</th>
-                <th>Price (€)</th>
-                <th>Seller</th>
-                <th>Photos</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($pending_accounts as $account): ?>
-                <tr data-account-id="<?php echo $account['id']; ?>">
-                  <td><?php echo htmlspecialchars($account['game_name']); ?></td>
-                  <td><?php echo htmlspecialchars($account['description']); ?></td>
-                  <td><?php echo number_format($account['price'], 2); ?></td>
-                  <td><?php echo htmlspecialchars($account['seller_name']); ?></td>
-                  <td>
-                    <?php foreach ($account['photos'] as $photo): ?>
-                      <img src="<?php echo htmlspecialchars($photo); ?>" alt="Account Photo" style="width:50px; height:50px; margin-right:5px;">
-                    <?php endforeach; ?>
-                  </td>
-                  <td>
-                    <button class="approve-btn" data-account-id="<?php echo $account['id']; ?>">Approve</button>
-                    <button class="reject-btn" data-account-id="<?php echo $account['id']; ?>">Reject</button>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
+          <div class="listings-section">
+            <?php foreach ($pending_accounts as $account): ?>
+              <div class="listing-card">
+                <h3><?php echo htmlspecialchars($account['game_name']); ?> Account</h3>
+                <div class="listing-photos">
+                  <?php foreach ($account['photos'] as $photo): ?>
+                    <img src="<?php echo htmlspecialchars($photo); ?>" alt="Account Photo" style="width:50px; height:50px; margin-right:5px;">
+                  <?php endforeach; ?>
+                </div>
+                <p> <?php echo number_format($account['price'], 2); ?> €</p>
+                <p><?php echo htmlspecialchars($account['description']); ?></p>
+                <p>Seller: <?php echo htmlspecialchars($account['seller_name']); ?></p>
+                <div class="listing-actions">
+                  <button class="approve-btn" data-account-id="<?php echo $account['id']; ?>">Approve</button>
+                  <button class="reject-btn" data-account-id="<?php echo $account['id']; ?>">Reject</button>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
         <?php endif; ?>
       </div>
       <div id="user-list" class="admin-section">
