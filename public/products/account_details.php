@@ -117,10 +117,16 @@ if (empty($photos)) {
     </div>
 
     <div class="account-details">
-      <?php if ($account['is_sold']): ?>
-        <h2><?php echo htmlspecialchars($account['game_name']); ?> Accoun - Out of Stock</h2>
+      <?php if ($account['status'] === 'approved'): ?>
+        <?php if ($account['is_sold']): ?>
+          <h2><?php echo htmlspecialchars($account['game_name']); ?> Account - Out of Stock</h2>
+        <?php else: ?>
+          <h2><?php echo htmlspecialchars($account['game_name']); ?> Account</h2>
+        <?php endif; ?>
+      <?php elseif ($account['status'] === 'rejected'): ?>
+        <h2><?php echo htmlspecialchars($account['game_name']); ?> Account - Rejected</h2>
       <?php else: ?>
-        <h2><?php echo htmlspecialchars($account['game_name']); ?> Account</h2>
+        <h2><?php echo htmlspecialchars($account['game_name']); ?> Account - Pending Approval</h2>
       <?php endif; ?>
       <div class="carousel-container">
         <button class="carousel-arrow left" onclick="prevImg()">
@@ -147,11 +153,19 @@ if (empty($photos)) {
         </div>
       <?php endif; ?>
     </div>
+
+    <div id="lightbox-overlay">
+      <button class="carousel-arrow left" id="lightbox-prev">
+        <img src="../data/images/arrow_left.png" alt="Previous" style="width:32px;height:32px;">
+      </button>
+      <img id="lightbox-img" src="" alt="Full Size">
+      <button class="carousel-arrow right" id="lightbox-next">
+        <img src="../data/images/arrow_right.png" alt="Next" style="width:32px;height:32px;">
+      </button>
+    </div>
     <script>
       const photos = <?php echo json_encode($photos); ?>;
-
     </script>
-
   <script src="../script/script.js"></script>
   <script src="../script/accounts.js"></script>
   <script src="../script/account_details.js"></script>
