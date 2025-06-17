@@ -6,6 +6,8 @@
 /public/auth/db_connect.php
 /public/script/config.js
 /public/uploads/*
+
+.VSCodeCounter
 # User-specific files
 *.rsuser
 *.suo
