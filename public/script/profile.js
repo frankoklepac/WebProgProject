@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => messageDiv.remove(), 3000);
         if (data.success) {
           accountForm.reset();
-          // Optionally refresh listings or redirect
           window.location.href = 'profile.php?section=listings';
         }
       })

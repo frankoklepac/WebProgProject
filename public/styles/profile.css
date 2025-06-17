@@ -307,7 +307,7 @@
 .listing-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(16,24,43,0.08);
+  box-shadow: 0 2px 12px rgba(16,24,43,0.2);
   width: 320px;
   padding: 22px 18px 16px 18px;
   display: flex;
@@ -318,7 +318,7 @@
 }
 
 .listing-card:hover {
-  box-shadow: 0 6px 24px rgba(123,79,255,0.13);
+  box-shadow: 0 4px 16px rgba(16,24,43,0.4);
 }
 
 .listing-thumb {

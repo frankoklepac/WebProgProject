@@ -339,6 +339,7 @@ elseif ($pwmsg === 'error') $pwmsg_text = '<div class="error">An error occurred.
         </div>
       </div>
       <div id="listings" class="profile-section">
+        <h2>Your Listings</h2>
           <div class="listings-section">
               <?php if (empty($listings)): ?>
                   <p>You have no listings yet.</p>
