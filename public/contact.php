@@ -50,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
         $mail->Body    = "Name: $name\nEmail: $email\nMessage Content: $message_text";
 
         $mail->send();
-        echo "<p style='color:green;text-align:center;'>Test email sent successfully!</p>";
     } catch (Exception $e) {
         echo "<p style='color:red;text-align:center;'>Failed to send test email: {$mail->ErrorInfo}</p>";
     }
