@@ -99,14 +99,14 @@ if (isset($_SESSION['user_id'])) {
       </div>
       <div class="currency-text-showcase">
         <h2 class="animate-fly-up">Game Currency</h2>
-        <p class="animate-fly-up">Buy in-game currencies securely and easily.</p>
-        <p class="animate-fly-up">Buy in-game currencies such as: </p>
+        <p class="animate-fly-up">Buy in-game currencies securely and easily</p>
+        <p class="animate-fly-up">We offer: </p>
         <ul class="animate-fly-up" >
-          <li class="animate-fly-up">V-Bucks</li>
-          <li class="animate-fly-up">Riot Points</li>
-          <li class="animate-fly-up">Lattice</li>
-          <li class="animate-fly-up">PokeCoins</li>
-          <li class="animate-fly-up">Gold</li>
+          <li>V-Bucks</li>
+          <li>Riot Points</li>
+          <li>Lattice</li>
+          <li>PokeCoins</li>
+          <li>Gold</li>
         </ul>
         <a href="products/currency.php" class="btn animate-fly-up">Order Now!</a>
         
@@ -118,11 +118,11 @@ if (isset($_SESSION['user_id'])) {
         <p class="animate-fly-up">Buy game accounts securely and easily.</p>
         <p class="animate-fly-up">We offer accounts for popular games such as:</p>
         <ul class="animate-fly-up">
-          <li class="animate-fly-up">Fortnite</li>
-          <li class="animate-fly-up">League of Legends</li>
-          <li class="animate-fly-up">Marvel Rivals</li>
-          <li class="animate-fly-up">Pokemon Go</li>
-          <li class="animate-fly-up">World of Tanks</li>
+          <li>Fortnite</li>
+          <li>League of Legends</li>
+          <li>Marvel Rivals</li>
+          <li>Pokemon Go</li>
+          <li>World of Tanks</li>
         </ul>
         <a href="products/accounts.php" class="btn animate-fly-up">Order Now!</a>
       </div>
