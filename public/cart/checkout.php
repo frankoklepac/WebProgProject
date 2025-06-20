@@ -149,6 +149,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['go_to_payment'])) {
     </div>
   </div>
   <script src="../script/script.js"></script>
-  <!--<script src="../script/checkout.js"></script>-->
 </body>
 </html>

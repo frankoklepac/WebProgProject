@@ -16,6 +16,15 @@ if (isset($_SESSION['user_id'])) {
     $stmt->fetch();
     $stmt->close();
 }
+
+$currencies = [];
+$result = $conn->query("SELECT * FROM game_currency WHERE active = 1 ORDER BY created_at DESC");
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $currencies[] = $row;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -155,36 +164,31 @@ if (isset($_SESSION['user_id'])) {
         </div>
       </div>
       <div class="currency-list">
-        <?php
-        $result = $conn->query("SELECT * FROM game_currency ORDER BY created_at DESC");
-        if ($result && $result->num_rows > 0):
-            while ($row = $result->fetch_assoc()):
-        ?>
-          <div class="currency-card" data-category="<?php echo strtolower(str_replace(' ', '_', $row['game_name'])); ?>"
-              data-created-at="<?php echo htmlspecialchars($row['created_at']); ?>">
-            <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Currency Image" class="currency-img">
-            <div class="currency-name">
-              <?php echo htmlspecialchars($row['amount']) . ' ' . htmlspecialchars($row['currency_name']); ?>
+        <?php if (count($currencies) > 0): ?>
+          <?php foreach ($currencies as $row): ?>
+            <div class="currency-card" data-category="<?php echo strtolower(str_replace(' ', '_', $row['game_name'])); ?>"
+                data-created-at="<?php echo htmlspecialchars($row['created_at']); ?>">
+              <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Currency Image" class="currency-img">
+              <div class="currency-name">
+                <?php echo htmlspecialchars($row['amount']) . ' ' . htmlspecialchars($row['currency_name']); ?>
+              </div>
+              <div class="currency-price"
+                  data-base-price="<?php echo htmlspecialchars($row['price']); ?>">
+                <?php echo number_format($row['price'], 2); ?> €
+              </div>
+              <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <form method="post" action="remove_currency.php" onsubmit="return confirm('Are you sure you want to remove this currency?');" style="display:inline;">
+                  <input type="hidden" name="currency_id" value="<?php echo $row['id']; ?>">
+                  <button type="submit" class="remove-product-btn">Remove Product</button>
+                </form>
+              <?php else: ?>
+              <button class="add-to-cart-btn" data-product-id="<?php echo $row['id']; ?>" data-product-type="currency">Add to Cart</button>
+              <?php endif; ?>
             </div>
-            <div class="currency-price"
-                data-base-price="<?php echo htmlspecialchars($row['price']); ?>">
-              <?php echo number_format($row['price'], 2); ?> €
-            </div>
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-              <form method="post" action="remove_currency.php" onsubmit="return confirm('Are you sure you want to remove this currency?');" style="display:inline;">
-                <input type="hidden" name="currency_id" value="<?php echo $row['id']; ?>">
-                <button type="submit" class="remove-product-btn">Remove Product</button>
-              </form>
-            <?php else: ?>
-             <button class="add-to-cart-btn" data-product-id="<?php echo $row['id']; ?>" data-product-type="currency">Add to Cart</button>
-            <?php endif; ?>
-          </div>
-        <?php
-            endwhile;
-        else:
-            echo "<p>No currency available.</p>";
-        endif;
-        ?>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p>No currency available.</p>
+        <?php endif; ?>
       </div>
     </div>
   </div>

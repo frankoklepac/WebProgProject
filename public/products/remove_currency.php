@@ -9,7 +9,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 if (isset($_POST['currency_id'])) {
     $currency_id = intval($_POST['currency_id']);
 
-    $stmt = $conn->prepare("DELETE FROM game_currency WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE game_currency SET active = 0 WHERE id = ?");
     $stmt->bind_param("i", $currency_id);
     $stmt->execute();
     $stmt->close();
