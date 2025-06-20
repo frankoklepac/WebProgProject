@@ -152,6 +152,7 @@ if ($result && $result->num_rows > 0) {
               <option value="KRW">South Korean Won (₩)</option>
               <option value="JPY">Japanese Yen (¥)</option>
               <option value="CHF">Swiss Franc (Fr)</option>
+              <option value="GBP">British Pound (£)</option>
             </select>
           </div>
             <div>

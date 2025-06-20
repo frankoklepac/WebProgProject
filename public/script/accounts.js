@@ -15,7 +15,7 @@ const categoryTitles = {
   marvel_rivals: "Marvel Rivals Accounts"
 };
 
-const USE_EXCHANGE_API = false;
+const USE_EXCHANGE_API = true;
 
 function updatePrices(selectedCurrency) {
   if (selectedCurrency === 'EUR' || !USE_EXCHANGE_API) {

@@ -3,7 +3,8 @@ const currencySymbols = {
   USD: '$',
   KRW: '₩',
   JPY: '¥',
-  CHF: 'Fr'
+  CHF: 'Fr',
+  GBP: '£',
 };
 
 const categoryTitles = {
@@ -15,7 +16,7 @@ const categoryTitles = {
   marvel_rivals: "Lattice"
 };
 
-const USE_EXCHANGE_API = false;
+const USE_EXCHANGE_API = true;
 
 function updatePrices(selectedCurrency) {
   if (selectedCurrency === 'EUR' || !USE_EXCHANGE_API) {
